@@ -36,38 +36,25 @@ import logging  # noqa
 
 __all__ = ['weightlifting', 'weightlifting_subset']
 
-cache_dict = {}
 def weightlifting(P: Set[int], weight: int) -> bool:
-    '''
-    Sig:  Set[int], int -> bool
-    Pre:
-    Post:
-    Ex:   P = {2, 32, 234, 35, 12332, 1, 7, 56}
-          weightlifting(P, 299) = True
-          weightlifting(P, 11) = False
-    '''
-    # base case
-    if weight == 0:
-        return True
-    elif len(P)== 0 or weight < 0:
-        return False
-    else:
-        res = False
-        for m in P:
-            P2 = P.copy()
-            P2.remove(m)
-            if str((P2, weight)) in cache_dict:
-                return cache_dict[str((P2, weight))]
-
-            res = res or weightlifting(P2, weight - m)
-            cache_dict[str((P2, weight - m))] = res
-        return res 
-
     plate_list = list(P)
-    # Initialise the dynamic programming matrix
-    dp_matrix = [
-        [None for i in range(weight + 1)] for j in range(len(plate_list) + 1)
-    ]
+    dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+    def weightlifting_aux(P: Set[int], weight: int) -> bool:
+        # base cases
+        if weight == 0:
+            return True
+        elif len(P) == 0 or weight < 0:
+            return False
+        # do we have the result from this cached?
+        elif dp_matrix[len(P)][weight] != None:
+            return dp_matrix[len(P)][weight]
+        # branch
+        else:
+            P2 = P.copy()
+            current_plate = P2.pop()
+            dp_matrix[len(P)][weight] = weightlifting_aux(P2, weight) or weightlifting_aux(P2, weight - current_plate)
+            return dp_matrix[len(P)][weight]
+    return weightlifting_aux(P, weight)
 
 
 def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
@@ -79,6 +66,38 @@ def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
           weightlifting_subset(P, 299) = {56, 7, 234, 2}
           weightlifting_subset(P, 11) = {}
     '''
+    plate_list = list(P)
+    dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+
+    def weightlifting_aux(P: Set[int], weight: int) -> bool:
+        # base cases
+        if weight == 0:
+            dp_matrix[len(P)][weight] = True
+            return True
+        elif len(P) == 0 or weight < 0:
+            return False
+        # do we have the result from this cached?
+        elif dp_matrix[len(P)][weight] != None:
+            return dp_matrix[len(P)][weight]
+        # branch
+        else:
+            P2 = P.copy()
+            current_plate = P2.pop()
+            dp_matrix[len(P)][weight] = weightlifting_aux(P2, weight) or weightlifting_aux(P2, weight - current_plate)
+            return dp_matrix[len(P)][weight]
+
+    res = set()
+    
+    # Unclear
+    print(f'Running subset for P = {P} and weight = {weight}')
+    if (weightlifting_aux(P, weight)):
+        while weight:
+            current_plate = P.pop()
+            if current_plate <= weight and dp_matrix[len(P)][weight - current_plate] == True:
+                res.add(current_plate)
+                weight = weight - current_plate
+
+    return res 
 
 
 class WeightliftingTest(unittest.TestCase):
@@ -107,7 +126,6 @@ class WeightliftingTest(unittest.TestCase):
         self.assertFalse(
             WeightliftingTest.weightlifting(plates, 11)
         )
-
     def test_subset_sanity(self):
         """
         Sanity Test for weightlifting_subset()
@@ -164,9 +182,10 @@ class WeightliftingTest(unittest.TestCase):
 if __name__ == '__main__':
     # Set logging config to show debug messages.
     logging.basicConfig(level=logging.DEBUG)
-    #unittest.main()
+    unittest.main()
 
-    plates = {7,8,9}
+
     plates = {2, 32, 234, 35, 12332, 1, 7, 56}
-    for i in range(10):
-        print(weightlifting(plates, 299))
+    plates = {2, 4, 5, 8, 9, 10, 33, 45}
+    plates = {100, 2, 3}
+    print(weightlifting_subset(plates, 5))
