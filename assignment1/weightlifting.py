@@ -36,6 +36,22 @@ import logging  # noqa
 
 __all__ = ['weightlifting', 'weightlifting_subset']
 
+def weightlifting_it(P: Set[int], weight: int) -> bool:
+    plate_list = list(P)
+    dp_matrix = [[False for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+
+    for i in range(len(plate_list) + 1):
+        for j in range(weight+ 1):
+            if j == 0:
+                dp_matrix[i][j] = True
+            else: 
+                if plate_list[i - 1] > j:
+                    dp_matrix[i][j] = dp_matrix[i - 1][j]
+                else:
+                    dp_matrix[i][j] = dp_matrix[i - 1][j] or dp_matrix[i - 1][j - plate_list[i - 1]]
+    return dp_matrix[-1][-1]
+
+
 def weightlifting(P: Set[int], weight: int) -> bool:
     plate_list = list(P)
     dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
@@ -182,10 +198,10 @@ class WeightliftingTest(unittest.TestCase):
 if __name__ == '__main__':
     # Set logging config to show debug messages.
     logging.basicConfig(level=logging.DEBUG)
-    unittest.main()
+    #unittest.main()
 
 
     plates = {2, 32, 234, 35, 12332, 1, 7, 56}
     plates = {2, 4, 5, 8, 9, 10, 33, 45}
-    plates = {100, 2, 3}
-    print(weightlifting_subset(plates, 5))
+    plates = {100, 2, -1}
+    print(weightlifting_it(plates, 101))
