@@ -36,100 +36,60 @@ import logging  # noqa
 
 __all__ = ['weightlifting', 'weightlifting_subset']
 
+
 def weightlifting(P: Set[int], weight: int) -> bool:
-    plate_list = list(P)
-    dp_matrix = [[False for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+    plate_list = sorted(P)
+    if len(P) == 0:
+        return weight == 0
+
+    dp_matrix = [[False for i in range(weight + 1)]
+                                       for j in range(len(plate_list) + 1)]
 
     for i in range(len(plate_list) + 1):
-        for j in range(weight+ 1):
+        for j in range(weight + 1):
             if j == 0:
                 dp_matrix[i][j] = True
-            else: 
+            elif i == 0:
+                dp_matrix[i][j] = False
+            else:
                 if plate_list[i - 1] > j:
                     dp_matrix[i][j] = dp_matrix[i - 1][j]
                 else:
-                    dp_matrix[i][j] = dp_matrix[i - 1][j] or dp_matrix[i - 1][j - plate_list[i - 1]]
+                    dp_matrix[i][j] = dp_matrix[i -1][j] or dp_matrix[i - 1][j - plate_list[i - 1]]
     return dp_matrix[-1][-1]
 
-def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
-  '''
-    Sig:  Set[int], int -> Set[int]
-    Pre:
-    Post:
-    Ex:   P = {2, 32, 234, 35, 12332, 1, 7, 56}
-          weightlifting_subset(P, 299) = {56, 7, 234, 2}
-          weightlifting_subset(P, 11) = {}
-  '''
-  plate_list = list(P)
-  dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
-  
-
-
-'''
-def weightlifting(P: Set[int], weight: int) -> bool:
-    plate_list = list(P)
-    dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
-    def weightlifting_aux(P: Set[int], weight: int) -> bool:
-        # base cases
-        if weight == 0:
-            return True
-        elif len(P) == 0 or weight < 0:
-            return False
-        # do we have the result from this cached?
-        elif dp_matrix[len(P)][weight] != None:
-            return dp_matrix[len(P)][weight]
-        # branch
-        else:
-            P2 = P.copy()
-            current_plate = P2.pop()
-            dp_matrix[len(P)][weight] = weightlifting_aux(P2, weight) or weightlifting_aux(P2, weight - current_plate)
-            return dp_matrix[len(P)][weight]
-    return weightlifting_aux(P, weight)
-
 
 def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
-    Sig:  Set[int], int -> Set[int]
-    Pre:
-    Post:
-    Ex:   P = {2, 32, 234, 35, 12332, 1, 7, 56}
-          weightlifting_subset(P, 299) = {56, 7, 234, 2}
-          weightlifting_subset(P, 11) = {}
     plate_list = list(P)
-    dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+
+    dp_matrix = [[False for i in range(weight + 1)]
+                                       for j in range(len(plate_list) + 1)]
+
     res = set()
-
-    def weightlifting_aux(P: Set[int], weight: int) -> bool:
-        # base cases
-        if weight == 0:
-            dp_matrix[len(P)][weight] = True
-            return True
-        elif len(P) == 0 or weight < 0:
-            return False
-        # do we have the result from this cached?
-        elif dp_matrix[len(P)][weight] != None:
-            return dp_matrix[len(P)][weight]
-        # branch
-        else:
-            P2 = P.copy()
-            current_plate = P2.pop()
-            dp_matrix[len(P)][weight] = weightlifting_aux(P2, weight) or weightlifting_aux(P2, weight - current_plate)
-            if dp_matrix[len(P)][weight]:
-                res.add(current_plate)
-            return dp_matrix[len(P)][weight]
-
+    for i in range(len(plate_list) + 1):
+        for j in range(weight + 1):
+            if j == 0:
+                dp_matrix[i][j] = True
+            elif i == 0:
+                dp_matrix[i][j] = False
+            else:
+                if plate_list[i - 1] > j:
+                    dp_matrix[i][j] = dp_matrix[i - 1][j]
+                else:
+                    v1 = dp_matrix[i - 1][j]
+                    v2 = dp_matrix[i - 1][j - plate_list[i - 1]]
+                    dp_matrix[i][j] = v1 or v2
     
-    # Unclear
-    print(f'Running subset for P = {P} and weight = {weight}')
-    if (weightlifting_aux(P, weight)):
-        while weight:
-            current_plate = P.pop()
-            if current_plate <= weight and dp_matrix[len(P)][weight - current_plate] == True:
+    if dp_matrix[-1][-1] == True:
+        i = len(plate_list)
+        while weight != 0:
+            current_plate = plate_list[i-1]
+            if current_plate <= weight and dp_matrix[i - 1][weight - current_plate]:
                 res.add(current_plate)
-                weight = weight - current_plate
+                weight -= current_plate
+            i = i - 1
+    return res
 
-    return res 
-
-'''
 
 class WeightliftingTest(unittest.TestCase):
     """
@@ -215,9 +175,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     unittest.main()
 
-    '''
     plates = {2, 32, 234, 35, 12332, 1, 7, 56}
-    plates = {2, 4, 5, 8, 9, 10, 33, 45}
-    plates = {100, 2, -1}
-    print(weightlifting_it(plates, 101))
-    '''
+    plates = {75, 85, 86}
+    print(weightlifting_subset(plates, 160))

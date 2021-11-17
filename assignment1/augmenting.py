@@ -37,29 +37,73 @@ import logging  # noqa
 
 __all__ = ['augmenting', 'augmenting_extended']
 
-
 def augmenting(G: Graph, s: str, t: str) -> bool:
-    """
-    Sig:  Graph G(V, E), str, str -> bool
-    Pre:
-    Post:
-    Ex:   Sanity tests below
-          augmenting(g1, 'a', 'f') = False
-          augmenting(g2, 'a', 'f') = True
-    """
+    cache_list = []
+    def augmenting_aux(G: Graph, s: str, t: str) -> bool:
+        """
+        Sig:  Graph G(V, E), str, str -> bool
+        Pre:
+        Post:
+        Ex:   Sanity tests below
+            augmenting(g1, 'a', 'f') = False
+            augmenting(g2, 'a', 'f') = True
+        """
+        if s == t:
+            return True
+        else:
+            res = False
+            cache_list.append(s)
+            for n in G.neighbors(s):
+                if G.capacity(s, n) > G.flow(s, n) and not n in cache_list:
+                    if augmenting_aux(G, n, t):
+                        res = True
+            return res
+    return augmenting_aux(G, s, t)
 
 
 def augmenting_extended(G: Graph, s: str, t: str) \
                         -> Tuple[bool, List[Tuple[str, str]]]:
-    """
-    Sig:  Graph G(V,E), str, str -> Tuple[bool, List[Tuple[str, str]]]
-    Pre:
-    Post:
-    Ex:   Sanity tests below
+    cache_dict = dict()
+    def augmenting_aux(G: Graph, s: str, t: str) -> bool:
+        """
+        Sig:  Graph G(V,E), str, str -> Tuple[bool, List[Tuple[str, str]]]
+        Pre:
+        Post:
+        Ex:   Sanity tests below
           augmenting_extended(g1, 'a', 'f') = False, []
           augmenting_extended(g2, 'a', 'f') = True, [('a', 'c'), ('c', 'b'),
                                                      ('b', 'd'), ('d', 'f')]
-    """
+        """
+        #if s in cache_dict:
+            #if cache_dict[s][0]:
+                #return False
+            #else:
+                #cache_dict[s][0] = True
+
+        if s == t:
+            return True
+        else:
+            for n in G.neighbors(s):
+                if G.capacity(s, n) > G.flow(s, n):
+                    if n not in cache_dict:
+                        cache_dict[n] = s
+                        #cache_dict[n].append(False)
+                        #cache_dict[n].append(s)
+                        if augmenting_aux(G, n, t):
+                            return True
+            return False 
+    
+    if augmenting_aux(G, s, t):
+        path = []
+        c = t
+        while c != s:
+            n = cache_dict[c]
+            path.insert(0, (n, c))
+            c = n
+        return(True, path)
+    else:
+        return (False, [])
+
 
 
 class AugmentingTest(unittest.TestCase):
@@ -171,6 +215,7 @@ class AugmentingTest(unittest.TestCase):
         g2 = g1.copy()
         g2.set_flow('b', 'd', 11)
         path_exists, path = AugmentingTest.augmenting_extended(g2, 'a', 'f')
+        print(path)
         self.assertTrue(path_exists)
         self.assertIsAugmentingPath(g2, 'a', 'f', path)
 
