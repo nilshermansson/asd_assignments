@@ -36,7 +36,7 @@ import logging  # noqa
 
 __all__ = ['weightlifting', 'weightlifting_subset']
 
-def weightlifting_it(P: Set[int], weight: int) -> bool:
+def weightlifting(P: Set[int], weight: int) -> bool:
     plate_list = list(P)
     dp_matrix = [[False for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
 
@@ -51,7 +51,21 @@ def weightlifting_it(P: Set[int], weight: int) -> bool:
                     dp_matrix[i][j] = dp_matrix[i - 1][j] or dp_matrix[i - 1][j - plate_list[i - 1]]
     return dp_matrix[-1][-1]
 
+def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
+  '''
+    Sig:  Set[int], int -> Set[int]
+    Pre:
+    Post:
+    Ex:   P = {2, 32, 234, 35, 12332, 1, 7, 56}
+          weightlifting_subset(P, 299) = {56, 7, 234, 2}
+          weightlifting_subset(P, 11) = {}
+  '''
+  plate_list = list(P)
+  dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+  
 
+
+'''
 def weightlifting(P: Set[int], weight: int) -> bool:
     plate_list = list(P)
     dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
@@ -74,16 +88,15 @@ def weightlifting(P: Set[int], weight: int) -> bool:
 
 
 def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
-    '''
     Sig:  Set[int], int -> Set[int]
     Pre:
     Post:
     Ex:   P = {2, 32, 234, 35, 12332, 1, 7, 56}
           weightlifting_subset(P, 299) = {56, 7, 234, 2}
           weightlifting_subset(P, 11) = {}
-    '''
     plate_list = list(P)
     dp_matrix = [[None for i in range(weight + 1)] for j in range(len(plate_list) + 1)]
+    res = set()
 
     def weightlifting_aux(P: Set[int], weight: int) -> bool:
         # base cases
@@ -100,9 +113,10 @@ def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
             P2 = P.copy()
             current_plate = P2.pop()
             dp_matrix[len(P)][weight] = weightlifting_aux(P2, weight) or weightlifting_aux(P2, weight - current_plate)
+            if dp_matrix[len(P)][weight]:
+                res.add(current_plate)
             return dp_matrix[len(P)][weight]
 
-    res = set()
     
     # Unclear
     print(f'Running subset for P = {P} and weight = {weight}')
@@ -115,6 +129,7 @@ def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
 
     return res 
 
+'''
 
 class WeightliftingTest(unittest.TestCase):
     """
@@ -198,10 +213,11 @@ class WeightliftingTest(unittest.TestCase):
 if __name__ == '__main__':
     # Set logging config to show debug messages.
     logging.basicConfig(level=logging.DEBUG)
-    #unittest.main()
+    unittest.main()
 
-
+    '''
     plates = {2, 32, 234, 35, 12332, 1, 7, 56}
     plates = {2, 4, 5, 8, 9, 10, 33, 45}
     plates = {100, 2, -1}
     print(weightlifting_it(plates, 101))
+    '''
