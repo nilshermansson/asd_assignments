@@ -75,7 +75,7 @@ def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
         dp_matrix[len(u)][len(r)] = res
         return res
     res = min_differenceAUX(u, r, R)
-    return res        
+    return res
 
     # To get the resemblance between two letters, use code like this:
     # To get the resemblance between two letters, use code like this:
@@ -97,7 +97,8 @@ def min_difference_align(u: str, r: str,
     """
     dp_matrix = [[None for i in range(len(r) + 1)]
                                        for j in range(len(u) + 1)]
-    def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
+    def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> Tuple[int, str, str]:
+
         """
         Sig:  str, str, Dict[str, Dict[str, int]] -> int
         Pre:  For all characters c in u and k in r,
@@ -113,26 +114,42 @@ def min_difference_align(u: str, r: str,
 
         if len(u) == 0: 
             cost = 0
+            string = ''
             for char in r:
                 cost += R['-'][char]
-            res = cost
+                string = string + '-'
+            res = [cost, string, r]
         elif len(r) == 0:
             cost = 0
+            string = ''
             for char in u:
                 cost += R[char]['-']
-            res = cost
+                string = string + '-'
+            res = [cost, u, string] 
         else:
-            res = min(
-                R[u[0]]['-'] + min_differenceAUX(u[1:], r, R),
-                R['-'][r[0]] + min_differenceAUX(u, r[1:], R),
-                R[u[0]][r[0]] + min_differenceAUX(u[1:], r[1:], R),
-            )
+            res1 = min_differenceAUX(u[1:], r, R).copy()
+            res2 = min_differenceAUX(u, r[1:], R).copy()
+            res3 = min_differenceAUX(u[1:], r[1:], R).copy()
+            res1[0] = R[u[0]]['-'] + res1[0]
+            res2[0] = R['-'][r[0]] + res2[0]
+            res3[0] = R[u[0]][r[0]] + res3[0]
+
+            res1[1] = u[0] + res1[1]
+            res1[2] = '-' + res1[2]
+
+            res2[1] = '-' + res2[1]
+            res2[2] = r[0] + res2[2]
+
+            res3[1] = u[0] + res3[1]
+            res3[2] = r[0] + res3[2]
+
+
+            results = [res1, res2, res3]
+            res = min(results, key = lambda t: t[0])
 
         dp_matrix[len(u)][len(r)] = res
         return res
-
-    min_differenceAUX(u, r, R)
-
+    return min_differenceAUX(u, r, R)
 
 
 
@@ -293,9 +310,8 @@ class MinDifferenceTest(unittest.TestCase):
 if __name__ == '__main__':
     # Set logging config to show debug messages.
     #logging.basicConfig(level=logging.DEBUG)
-    u = "dinamck"
-    r = "dynamic"
-    exp = 12
-    #unittest.main()
+    u = "ng"
+    r = "q"
+    unittest.main()
     R = qwerty_distance()
-    print(min_difference(u, r, R))
+    print(min_difference_align(u, r, R))
