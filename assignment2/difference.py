@@ -39,15 +39,45 @@ import logging  # noqa
 
 # Solution to Task B:
 def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
-    """
-    Sig:  str, str, Dict[str, Dict[str, int]] -> int
-    Pre:  For all characters c in u and k in r,
-          then R[c][k] exists, and R[k][c] exists.
-    Post:
-    Ex:   Let R be the resemblance matrix where every change and skip
-          costs 1
-          min_difference("dinamck", "dynamic", R) --> 3
-    """
+    dp_matrix = [[None for i in range(len(r) + 1)]
+                                       for j in range(len(u) + 1)]
+    def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
+        """
+        Sig:  str, str, Dict[str, Dict[str, int]] -> int
+        Pre:  For all characters c in u and k in r,
+            then R[c][k] exists, and R[k][c] exists.
+        Post:
+        Ex:   Let R be the resemblance matrix where every change and skip
+            costs 1
+            min_difference("dinamck", "dynamic", R) --> 3
+        """
+        
+        if dp_matrix[len(u)][len(r)] != None:
+            return dp_matrix[len(u)][len(r)]
+
+        if len(u) == 0: 
+            cost = 0
+            for char in r:
+                cost += R['-'][char]
+            res = cost
+        elif len(r) == 0:
+            cost = 0
+            for char in u:
+                cost += R[char]['-']
+            res = cost
+        else:
+            res = min(
+                R[u[0]]['-'] + min_differenceAUX(u[1:], r, R),
+                R['-'][r[0]] + min_differenceAUX(u, r[1:], R),
+                R[u[0]][r[0]] + min_differenceAUX(u[1:], r[1:], R),
+            )
+
+        dp_matrix[len(u)][len(r)] = res
+        return res
+    res = min_differenceAUX(u, r, R)
+    return res        
+
+    # To get the resemblance between two letters, use code like this:
     # To get the resemblance between two letters, use code like this:
     # difference = R['a']['b']
 
@@ -65,6 +95,45 @@ def min_difference_align(u: str, r: str,
           min_difference_align("dinamck", "dynamic", R) -->
                                     3, "dinam-ck", "dynamic-"
     """
+    dp_matrix = [[None for i in range(len(r) + 1)]
+                                       for j in range(len(u) + 1)]
+    def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
+        """
+        Sig:  str, str, Dict[str, Dict[str, int]] -> int
+        Pre:  For all characters c in u and k in r,
+            then R[c][k] exists, and R[k][c] exists.
+        Post:
+        Ex:   Let R be the resemblance matrix where every change and skip
+            costs 1
+            min_difference("dinamck", "dynamic", R) --> 3
+        """
+        
+        if dp_matrix[len(u)][len(r)] != None:
+            return dp_matrix[len(u)][len(r)]
+
+        if len(u) == 0: 
+            cost = 0
+            for char in r:
+                cost += R['-'][char]
+            res = cost
+        elif len(r) == 0:
+            cost = 0
+            for char in u:
+                cost += R[char]['-']
+            res = cost
+        else:
+            res = min(
+                R[u[0]]['-'] + min_differenceAUX(u[1:], r, R),
+                R['-'][r[0]] + min_differenceAUX(u, r[1:], R),
+                R[u[0]][r[0]] + min_differenceAUX(u[1:], r[1:], R),
+            )
+
+        dp_matrix[len(u)][len(r)] = res
+        return res
+
+    min_differenceAUX(u, r, R)
+
+
 
 
 # Sample matrix provided by us:
@@ -223,5 +292,10 @@ class MinDifferenceTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # Set logging config to show debug messages.
-    logging.basicConfig(level=logging.DEBUG)
-    unittest.main()
+    #logging.basicConfig(level=logging.DEBUG)
+    u = "dinamck"
+    r = "dynamic"
+    exp = 12
+    #unittest.main()
+    R = qwerty_distance()
+    print(min_difference(u, r, R))

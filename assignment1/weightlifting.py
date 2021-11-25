@@ -38,6 +38,15 @@ __all__ = ['weightlifting', 'weightlifting_subset']
 
 
 def weightlifting(P: Set[int], weight: int) -> bool:
+    """
+        Sig:  weightlifting(P, weight), Set[int], int -> bool
+        Pre:  weight > 0, all plates in P are > 0 
+        Post:
+        Ex:
+            weightlifting({7, 8, 9}, 15 = True)
+            weightlifting({7, 8, 9}, 18 = False)
+    """
+
     plate_list = sorted(P)
     if len(P) == 0:
         return weight == 0
@@ -46,7 +55,9 @@ def weightlifting(P: Set[int], weight: int) -> bool:
                                        for j in range(len(plate_list) + 1)]
 
     for i in range(len(plate_list) + 1):
+        #Variant: len(plate_list) + 1 - i
         for j in range(weight + 1):
+            #Variant: weight + 1 - j
             if j == 0:
                 dp_matrix[i][j] = True
             elif i == 0:
@@ -60,6 +71,16 @@ def weightlifting(P: Set[int], weight: int) -> bool:
 
 
 def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
+    """
+        Sig:  weightlifting_subset(P, weight), Set[int], int -> Set[int]
+        Pre:  weight > 0, all plates in P are > 0 
+        Post:
+        Ex:
+            weightlifting({7, 8, 9}, 15 = {7, 8})
+            weightlifting({7, 8, 9}, 18 = {})
+    """
+
+
     plate_list = list(P)
 
     dp_matrix = [[False for i in range(weight + 1)]
@@ -67,7 +88,9 @@ def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
 
     res = set()
     for i in range(len(plate_list) + 1):
+        #Variant: len(plate_list) + 1 - i
         for j in range(weight + 1):
+            #Variant: weight + 1 - j
             if j == 0:
                 dp_matrix[i][j] = True
             elif i == 0:
@@ -83,6 +106,7 @@ def weightlifting_subset(P: Set[int], weight: int) -> Set[int]:
     if dp_matrix[-1][-1] == True:
         i = len(plate_list)
         while weight != 0:
+            #Variant: weight
             current_plate = plate_list[i-1]
             if current_plate <= weight and dp_matrix[i - 1][weight - current_plate]:
                 res.add(current_plate)

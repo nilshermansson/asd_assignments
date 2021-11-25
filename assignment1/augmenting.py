@@ -40,10 +40,11 @@ __all__ = ['augmenting', 'augmenting_extended']
 def augmenting(G: Graph, s: str, t: str) -> bool:
     cache_list = []
     def augmenting_aux(G: Graph, s: str, t: str) -> bool:
+        #Variant: number of nodes of G not present in the cache_list
         """
         Sig:  Graph G(V, E), str, str -> bool
-        Pre:
-        Post:
+        Pre: A list with the handle cache_list must be created before any calls
+        Post: cache_list contains all visited nodes
         Ex:   Sanity tests below
             augmenting(g1, 'a', 'f') = False
             augmenting(g2, 'a', 'f') = True
@@ -54,6 +55,7 @@ def augmenting(G: Graph, s: str, t: str) -> bool:
             res = False
             cache_list.append(s)
             for n in G.neighbors(s):
+                #Variant G.neighbors(s) - n
                 if G.capacity(s, n) > G.flow(s, n) and not n in cache_list:
                     if augmenting_aux(G, n, t):
                         res = True
@@ -63,32 +65,32 @@ def augmenting(G: Graph, s: str, t: str) -> bool:
 
 def augmenting_extended(G: Graph, s: str, t: str) \
                         -> Tuple[bool, List[Tuple[str, str]]]:
+    """
+    Sig:  Graph G(V,E), str, str -> Tuple[bool, List[Tuple[str, str]]]
+    Pre:
+    Post:
+    Ex:   Sanity tests below
+        augmenting_extended(g1, 'a', 'f') = False, []
+        augmenting_extended(g2, 'a', 'f') = True, [('a', 'c'), ('c', 'b'),
+                                                     ('b', 'd'), ('d', 'f')]
+    """
+
     cache_dict = dict()
     def augmenting_aux(G: Graph, s: str, t: str) -> bool:
+        #Variant: number of nodes in G not contained in the cache_dict
         """
         Sig:  Graph G(V,E), str, str -> Tuple[bool, List[Tuple[str, str]]]
-        Pre:
-        Post:
-        Ex:   Sanity tests below
-          augmenting_extended(g1, 'a', 'f') = False, []
-          augmenting_extended(g2, 'a', 'f') = True, [('a', 'c'), ('c', 'b'),
-                                                     ('b', 'd'), ('d', 'f')]
+        Pre: A dictionary with the handle cache_dict must be created before any calls
+        Post: cache_dict will contain all searched paths through the graph
         """
-        #if s in cache_dict:
-            #if cache_dict[s][0]:
-                #return False
-            #else:
-                #cache_dict[s][0] = True
-
         if s == t:
             return True
         else:
             for n in G.neighbors(s):
+                #Variant: len(G.neighbors(s)) - n
                 if G.capacity(s, n) > G.flow(s, n):
                     if n not in cache_dict:
                         cache_dict[n] = s
-                        #cache_dict[n].append(False)
-                        #cache_dict[n].append(s)
                         if augmenting_aux(G, n, t):
                             return True
             return False 
@@ -97,6 +99,7 @@ def augmenting_extended(G: Graph, s: str, t: str) \
         path = []
         c = t
         while c != s:
+            #Variant: len(cache_dict)
             n = cache_dict[c]
             path.insert(0, (n, c))
             c = n
