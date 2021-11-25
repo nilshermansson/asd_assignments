@@ -310,8 +310,6 @@ class MinDifferenceTest(unittest.TestCase):
 if __name__ == '__main__':
     # Set logging config to show debug messages.
     #logging.basicConfig(level=logging.DEBUG)
-    u = "ng"
-    r = "q"
     unittest.main()
-    R = qwerty_distance()
-    print(min_difference_align(u, r, R))
+    #R = qwerty_distance()
+    #print(min_difference_align(u, r, R))
