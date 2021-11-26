@@ -3,8 +3,8 @@
 '''
 Assignment 2, Problem 2: Recomputing a Minimum Spanning Tree
 
-Team Number:
-Student Names:
+Team Number: 14
+Student Names: Nils Hermansson, Filip Pagliaro
 '''
 
 '''
@@ -58,8 +58,93 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
     """
     (u, v) = e
     assert(e in G and e not in T and weight < G.weight(u, v))
+    #Update weight
+
+    T.add_edge(u, v)
+    T.set_weight(u, v, weight)
+    G.set_weight(u, v, weight)
+
+    cache_dict = dict()
+    def search(T: Graph, u: str, s:str):
+
+        if u == s:
+            return
+        else:
+            neighbors = sorted(T.neighbors(u))
+            for n in neighbors:
+                if not n in cache_dict and n != cache_dict[u]:
+                    cache_dict[n] = u
+                    search(T, n, s)
+
+    
+
+    neighbors = sorted(T.neighbors(u))
+    for n in neighbors:
+        if not n in cache_dict:
+            cache_dict[n] = u
+            search(T, n, u)
+    
+
+    largest_w = -1
+    largest_e = None
+    prev = u
+    current = cache_dict[u]
+    go = True
+    while go:
+        weight = T.weight(prev, current)
+        if weight >= largest_w:
+            largest_w = weight
+            largest_e = (prev, current)
+        #print(f"Weight: {weight}, Edge: ({current}, {prev})")
+        #print(largest_w)
+        go = current != u
+        prev = current
+        current  = cache_dict[current]
+    (u, v) = largest_e
+    T.remove_edge(u, v) 
+
+    #Little search efter största
+
+    '''
+    G.set_weight(u, v, weight)
+
+    current = G.nodes[0]
+    priority_queue = []
+    visited = set() 
+    newT = []
+
+    for n in G.neighbors(current):
+        weight = G.weight(current, n)
+        priority_queue.append((current, n, weight))
+
+    priority_queue.sort(key=lambda tup: tup[2]) 
+    visited.add(current)
+    
+    while len(visited) < len(G.nodes):
+        new_edge = priority_queue.pop()
+        newT.append(new_edge)
+
+        current = new_edge[1]
+        visited.add(current)
+
+        for n in G.neighbors(current):
+            if n not in visited:
+                weight = G.weight(current, n)
+                priority_queue.append((current, n, weight))
+        priority_queue.sort(key=lambda tup: tup[2]) 
 
 
+    # start on any node
+    # add neighboring edges to sorted list
+    # loop while all nodes arent in MST:
+        # find lowest edge
+        # add the vertice to MST
+        # add the neighboring edges to sorted list that don't go to vertices already in mst
+    T.edges = newT
+    ''' 
+
+    
+    
 def update_MST_3(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
     """
     Sig:  Graph G(V, E), Graph T(V, E'), edge e, int ->

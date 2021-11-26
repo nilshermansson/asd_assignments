@@ -144,7 +144,7 @@ def min_difference_align(u: str, r: str,
             res3[2] = r[0] + res3[2]
 
 
-            results = [res1, res2, res3]
+            results = [res2, res1, res3]
             res = min(results, key = lambda t: t[0])
 
         dp_matrix[len(u)][len(r)] = res
