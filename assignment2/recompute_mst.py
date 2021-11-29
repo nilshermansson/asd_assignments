@@ -66,12 +66,18 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
 
     cache_dict = dict()
     def search(T: Graph, u: str, s:str):
+        """
+        Sig:  Graph T(V, E), str u, str s ->
+        Pre:  cache_dict exists and is an empty dictionary
+        Post: cache dict contains the path describing a cycle in the graph
+        """
 
         if u == s:
             return
         else:
             neighbors = sorted(T.neighbors(u))
             for n in neighbors:
+                #variant len(T.neighbors(u))
                 if not n in cache_dict and n != cache_dict[u]:
                     cache_dict[n] = u
                     search(T, n, s)
@@ -80,6 +86,7 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
 
     neighbors = sorted(T.neighbors(u))
     for n in neighbors:
+        #variant len(T.neighbors(u))
         if not n in cache_dict:
             cache_dict[n] = u
             search(T, n, u)
@@ -95,55 +102,13 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
         if weight >= largest_w:
             largest_w = weight
             largest_e = (prev, current)
-        #print(f"Weight: {weight}, Edge: ({current}, {prev})")
-        #print(largest_w)
         go = current != u
+
         prev = current
         current  = cache_dict[current]
     (u, v) = largest_e
     T.remove_edge(u, v) 
 
-    #Little search efter största
-
-    '''
-    G.set_weight(u, v, weight)
-
-    current = G.nodes[0]
-    priority_queue = []
-    visited = set() 
-    newT = []
-
-    for n in G.neighbors(current):
-        weight = G.weight(current, n)
-        priority_queue.append((current, n, weight))
-
-    priority_queue.sort(key=lambda tup: tup[2]) 
-    visited.add(current)
-    
-    while len(visited) < len(G.nodes):
-        new_edge = priority_queue.pop()
-        newT.append(new_edge)
-
-        current = new_edge[1]
-        visited.add(current)
-
-        for n in G.neighbors(current):
-            if n not in visited:
-                weight = G.weight(current, n)
-                priority_queue.append((current, n, weight))
-        priority_queue.sort(key=lambda tup: tup[2]) 
-
-
-    # start on any node
-    # add neighboring edges to sorted list
-    # loop while all nodes arent in MST:
-        # find lowest edge
-        # add the vertice to MST
-        # add the neighboring edges to sorted list that don't go to vertices already in mst
-    T.edges = newT
-    ''' 
-
-    
     
 def update_MST_3(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
     """

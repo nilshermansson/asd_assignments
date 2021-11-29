@@ -39,17 +39,26 @@ import logging  # noqa
 
 # Solution to Task B:
 def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
+    # variant: len(u) and len(r)
+    """
+    Sig:  str, str, Dict[str, Dict[str, int]] -> int
+    Pre:  For all characters c in u and k in r,
+        then R[c][k] exists, and R[k][c] exists.
+    Post:
+    Ex:   Let R be the resemblance matrix where every change and skip
+        costs 1
+        min_difference("dinamck", "dynamic", R) --> 3
+    """
     dp_matrix = [[None for i in range(len(r) + 1)]
                                        for j in range(len(u) + 1)]
     def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
+        # variant: len(u) and len(r)
         """
         Sig:  str, str, Dict[str, Dict[str, int]] -> int
         Pre:  For all characters c in u and k in r,
             then R[c][k] exists, and R[k][c] exists.
-        Post:
-        Ex:   Let R be the resemblance matrix where every change and skip
-            costs 1
-            min_difference("dinamck", "dynamic", R) --> 3
+            dp_matrix exists, is of size (len(r) + 1) * (len(u) + 1 ) and is filled with None 
+        Post: dp_matrix contains solutions to subproblems solved during execution
         """
         
         if dp_matrix[len(u)][len(r)] != None:
@@ -77,14 +86,11 @@ def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
     res = min_differenceAUX(u, r, R)
     return res
 
-    # To get the resemblance between two letters, use code like this:
-    # To get the resemblance between two letters, use code like this:
-    # difference = R['a']['b']
-
 
 # Solution to Task C:
 def min_difference_align(u: str, r: str,
                          R: Dict[str, Dict[str, int]]) -> Tuple[int, str, str]:
+    # variant: len(u) and len(r)
     """
     Sig:  str, str, Dict[str, Dict[str, int]] -> Tuple[int, str, str]
     Pre:  For all characters c in u and k in r,
@@ -98,15 +104,13 @@ def min_difference_align(u: str, r: str,
     dp_matrix = [[None for i in range(len(r) + 1)]
                                        for j in range(len(u) + 1)]
     def min_differenceAUX(u: str, r: str, R: Dict[str, Dict[str, int]]) -> Tuple[int, str, str]:
-
+        # variant: len(u) and len(r)
         """
-        Sig:  str, str, Dict[str, Dict[str, int]] -> int
+        Sig:  str, str, Dict[str, Dict[str, int]] -> Tuple[int, str, str]
         Pre:  For all characters c in u and k in r,
-            then R[c][k] exists, and R[k][c] exists.
-        Post:
-        Ex:   Let R be the resemblance matrix where every change and skip
-            costs 1
-            min_difference("dinamck", "dynamic", R) --> 3
+              then R[c][k] exists, and R[k][c] exists.
+              dp_matrix exists, is of size (len(r) + 1) * (len(u) + 1 ) and is filled with None 
+        Post: dp_matrix contains solutions to subproblems solved during execution
         """
         
         if dp_matrix[len(u)][len(r)] != None:
