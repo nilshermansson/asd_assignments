@@ -39,7 +39,6 @@ import logging  # noqa
 
 # Solution to Task B:
 def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
-    # variant: len(u) and len(r)
     """
     Sig:  str, str, Dict[str, Dict[str, int]] -> int
     Pre:  For all characters c in u and k in r,
@@ -90,7 +89,6 @@ def min_difference(u: str, r: str, R: Dict[str, Dict[str, int]]) -> int:
 # Solution to Task C:
 def min_difference_align(u: str, r: str,
                          R: Dict[str, Dict[str, int]]) -> Tuple[int, str, str]:
-    # variant: len(u) and len(r)
     """
     Sig:  str, str, Dict[str, Dict[str, int]] -> Tuple[int, str, str]
     Pre:  For all characters c in u and k in r,

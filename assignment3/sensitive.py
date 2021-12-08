@@ -45,6 +45,50 @@ def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
     Post:
     Ex:   sensitive(g1, 'a', 'f') = ('b', 'd')
     """
+    visited = set()
+
+    def dfs(G: Graph, s: str, t: str):
+        visited.add(s)
+        if s == t:
+            return True
+
+        for neighbor in G.neighbors(s):
+            if neighbor not in visited:
+                if G.flow(s, neighbor) < G.capacity(s, neighbor):
+                    if dfs(G, neighbor, t):
+                        return True
+        return False
+    residual_G = Graph(is_directed = True)
+    for edge in G.edges:
+        # add_edge(u, v, weight, capacity, flow)
+        # remove_edge(u, v)
+        res_u, res_v = edge
+        residual_G.add_edge(res_v, res_u, capacity = G.capacity(res_u, res_v), flow = G.flow(res_u, res_v))
+
+    all_edges = residual_G.edges
+    capped_edges = []
+
+    # Get all capped edges
+    for edge in all_edges:
+        u, v = edge
+        if residual_G.flow(u, v) == residual_G.capacity(u, v) and residual_G.flow(u, v) > 0:
+            capped_edges.append(edge)
+    
+    res = []
+    for edge in capped_edges:
+        # Increment capacity of edge
+        u, v = edge
+        og_capacity = residual_G.capacity(u, v)
+        residual_G.set_capacity(u, v, og_capacity + 1)
+
+        visited = set()
+        found_path =  dfs(residual_G, t, s)
+        residual_G.set_capacity(u, v, og_capacity)
+
+        # Reset capacity
+
+        if found_path:
+            return (v, u)
     return None, None
 
 

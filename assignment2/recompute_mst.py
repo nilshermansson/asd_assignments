@@ -58,7 +58,6 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
     """
     (u, v) = e
     assert(e in G and e not in T and weight < G.weight(u, v))
-    #Update weight
 
     T.add_edge(u, v)
     T.set_weight(u, v, weight)
@@ -66,6 +65,7 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
 
     cache_dict = dict()
     def search(T: Graph, u: str, s:str):
+        #variant: T.edges
         """
         Sig:  Graph T(V, E), str u, str s ->
         Pre:  cache_dict exists and is an empty dictionary
@@ -77,7 +77,7 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
         else:
             neighbors = sorted(T.neighbors(u))
             for n in neighbors:
-                #variant len(T.neighbors(u))
+                #variant: len(T.neighbors(u))
                 if not n in cache_dict and n != cache_dict[u]:
                     cache_dict[n] = u
                     search(T, n, s)
@@ -86,7 +86,7 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
 
     neighbors = sorted(T.neighbors(u))
     for n in neighbors:
-        #variant len(T.neighbors(u))
+        #variant: len(T.neighbors(u))
         if not n in cache_dict:
             cache_dict[n] = u
             search(T, n, u)
@@ -98,6 +98,7 @@ def update_MST_2(G: Graph, T: Graph, e: Tuple[str, str], weight: int):
     current = cache_dict[u]
     go = True
     while go:
+        #variant: len(cache_dict)
         weight = T.weight(prev, current)
         if weight >= largest_w:
             largest_w = weight
