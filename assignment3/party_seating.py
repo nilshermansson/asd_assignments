@@ -44,8 +44,26 @@ def party(known: List[Set[int]]) -> Tuple[bool, Set[int], Set[int]]:
     Post:
     Ex:   party([{1, 2}, {0}, {0}]) = True, {0}, {1, 2}
     """
-    return False, set(), set()
+    tables = [set(), set()]
+    def search(me, my_table):
 
+        if me in tables[my_table]:
+            return True
+        
+        tables[my_table].add(me)
+        for neighbor in known[me]:
+            if neighbor in tables[my_table]:
+                return False
+            else:
+                if not search(neighbor, (my_table + 1) % 2):
+                    return False
+        return True
+
+    for i in range(len(known)):
+        if not (i in tables[0] or i in tables[1]):
+            if not search(i, 0):
+                return False, set(), set()
+    return True, tables[0], tables[1]
 
 class PartySeatingTest(unittest.TestCase):
     """
