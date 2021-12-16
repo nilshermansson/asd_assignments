@@ -40,18 +40,24 @@ __all__ = ['party']
 def party(known: List[Set[int]]) -> Tuple[bool, Set[int], Set[int]]:
     """
     Sig:  List[Set[int]] -> Tuple[bool, Set[int], Set[int]]
-    Pre:
-    Post:
     Ex:   party([{1, 2}, {0}, {0}]) = True, {0}, {1, 2}
     """
     tables = [set(), set()]
-    def search(me, my_table):
-
+    def search(me: int, my_table: int):
+        # Variant: number of guests not in tables[0] or tables[1]
+        """
+        Sig:  int, int -> void
+        Pre:  tables exists and is a list of two empty sets
+        Post: tables[0] and tables[1] is populated with integers 
+              representing each pearson to be seated at each respective 
+              table
+        """
         if me in tables[my_table]:
             return True
         
         tables[my_table].add(me)
         for neighbor in known[me]:
+            # Variant: number of neighbors not in tables[0] or tables[1]
             if neighbor in tables[my_table]:
                 return False
             else:
@@ -60,6 +66,7 @@ def party(known: List[Set[int]]) -> Tuple[bool, Set[int], Set[int]]:
         return True
 
     for i in range(len(known)):
+        # Variant: len(known)
         if not (i in tables[0] or i in tables[1]):
             if not search(i, 0):
                 return False, set(), set()

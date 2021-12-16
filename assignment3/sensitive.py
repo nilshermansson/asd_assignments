@@ -41,27 +41,32 @@ __all__ = ['sensitive']
 def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
     """
     Sig:  Graph G(V,E), str, str -> Tuple[str, str]
-    Pre:
-    Post:
     Ex:   sensitive(g1, 'a', 'f') = ('b', 'd')
     """
-    visited = set()
-
-    def dfs(G: Graph, s: str, t: str):
+    def dfs(G: Graph, s: str, t: str) -> bool:
+        # Variant: number of nodes in G not in visited
+        """
+        Sig:  Graph G, str, str -> bool
+        Pre:  visited exists and is an empty set
+        Post: visited contains visited nodes after running a dfs
+        Ex:   sensitive(g1, 'a', 'f') = True
+        """
         visited.add(s)
         if s == t:
             return True
 
         for neighbor in G.neighbors(s):
+            # Variant: len(G.neighbors(s)) - index of neighbor
             if neighbor not in visited:
                 if G.flow(s, neighbor) < G.capacity(s, neighbor):
                     if dfs(G, neighbor, t):
                         return True
         return False
+
+    # Construct residual graph
     residual_G = Graph(is_directed = True)
     for edge in G.edges:
-        # add_edge(u, v, weight, capacity, flow)
-        # remove_edge(u, v)
+        # Variant: len(G.edges) - index of edge
         res_u, res_v = edge
         residual_G.add_edge(res_v, res_u, capacity = G.capacity(res_u, res_v), flow = G.flow(res_u, res_v))
 
@@ -70,12 +75,15 @@ def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
 
     # Get all capped edges
     for edge in all_edges:
+        # Variant: len(all_edges) - index of edge
         u, v = edge
         if residual_G.flow(u, v) == residual_G.capacity(u, v) and residual_G.flow(u, v) > 0:
             capped_edges.append(edge)
     
     res = []
     for edge in capped_edges:
+        # Variant: len(capped_edges) - index of edge
+
         # Increment capacity of edge
         u, v = edge
         og_capacity = residual_G.capacity(u, v)
@@ -83,9 +91,9 @@ def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
 
         visited = set()
         found_path =  dfs(residual_G, t, s)
-        residual_G.set_capacity(u, v, og_capacity)
 
         # Reset capacity
+        residual_G.set_capacity(u, v, og_capacity)
 
         if found_path:
             return (v, u)
