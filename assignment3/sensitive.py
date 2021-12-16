@@ -41,6 +41,7 @@ __all__ = ['sensitive']
 def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
     """
     Sig:  Graph G(V,E), str, str -> Tuple[str, str]
+    Pre:  (none)
     Ex:   sensitive(g1, 'a', 'f') = ('b', 'd')
     """
     def dfs(G: Graph, s: str, t: str) -> bool:
@@ -49,7 +50,6 @@ def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
         Sig:  Graph G, str, str -> bool
         Pre:  visited exists and is an empty set
         Post: visited contains visited nodes after running a dfs
-        Ex:   sensitive(g1, 'a', 'f') = True
         """
         visited.add(s)
         if s == t:
@@ -80,7 +80,6 @@ def sensitive(G: Graph, s: str, t: str) -> Tuple[str, str]:
         if residual_G.flow(u, v) == residual_G.capacity(u, v) and residual_G.flow(u, v) > 0:
             capped_edges.append(edge)
     
-    res = []
     for edge in capped_edges:
         # Variant: len(capped_edges) - index of edge
 

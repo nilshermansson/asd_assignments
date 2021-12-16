@@ -36,10 +36,10 @@ import logging  # noqa
 
 __all__ = ['party']
 
-
 def party(known: List[Set[int]]) -> Tuple[bool, Set[int], Set[int]]:
     """
     Sig:  List[Set[int]] -> Tuple[bool, Set[int], Set[int]]
+    Pre:  (none)
     Ex:   party([{1, 2}, {0}, {0}]) = True, {0}, {1, 2}
     """
     tables = [set(), set()]
